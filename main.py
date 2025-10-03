@@ -1,68 +1,53 @@
-from abc import ABC, abstractmethod
-from  PIL import Image
-import numpy as np
+from canvas import Canvas
+from shapes import Square, Rectangle
 
-class Figure(ABC):
-    def __init__(self, x, y, color):
-        self.x = x
-        self.y = y
-        self.color = color
+#Colors dict
+colors = {
+    "white": (255, 255, 255),
+    "black": (0, 0, 0),
+}
 
-    @abstractmethod
-    def draw(self, canvas):
-        """Draw the figure"""
-        pass
+#Get canvas size
+canvas_width = int(input('Enter canvas width: '))
+canvas_height = int(input('Enter canvas height: '))
 
-class Square(Figure):
-    """
-    This class represents a square object
-    """
-    def __init__(self, x, y, side, color):
-        super().__init__(x, y, color)
-        self.side = side
 
-    def draw(self, canvas):
-        canvas.data[self.x:self.x + self.side, self.y:self.y + self.side] = self.color
+canvas_color = colors.get(
+    input("Enter canvas color (white, black) default black: ")
+    ,"black"
+)
 
-class Rectangle(Figure):
-    """
-    This class represents a rectangle object
-    """
-    def __init__(self, x, y, width, height, color):
-        super().__init__(x, y, color)
-        self.width = width
-        self.height = height
+canvas = Canvas(canvas_width, canvas_height, canvas_color, canvas_path="assets/canvas.png")
 
-    def draw(self, canvas):
-        canvas.data[self.x:self.x + self.height, self.y: self.y + self.width] = self.color
-
-class Canvas:
-    """
-    This class represents a canvas object
-    """
-
-    def __init__(self, height, width, color, canvas_path):
-        self.height = height
-        self.width = width
-        self.color = color # Ej: [255, 255, 0]
-        self.canvas_path = canvas_path
-        self.data = self._generate_canvas()
-
-    def _generate_canvas(self):
-        data = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-        data[:] = self.color
-        return data
-
-    def save(self):
-        image = Image.fromarray(self.data, 'RGB')
-        image.save(self.canvas_path)
-
-canvas1 = Canvas(height=10, width=10, color=(0,0,0), canvas_path='assets/canvas1.png')
-rectangle1 = Rectangle(x=1, y=1, width=3, height=2, color=(255,0,0))
-rectangle1.draw(canvas1)
-square1 = Square(x=1, y=4, side=2, color=(0,0,255))
-square1.draw(canvas1)
-canvas1.save()
-
+while True:
+    shape_type = input("What do you like to draw? (square, rectangle) enter quit to quit: ")
+    if shape_type == "square":
+        red = int(input(f"How much red should the {shape_type} have (0 - 255): "))
+        green = int(input(f"How much green should the {shape_type} have (0 - 255): "))
+        blue = int(input(f"How much blue should the {shape_type} have (0 - 255): "))
+        color = (red, green, blue)
+        x_position = int(input("Enter x position: "))
+        y_position = int(input("Enter y position: "))
+        side = int(input("Enter side size: "))
+        square = Square(x_position, y_position, side, color)
+        square.draw(canvas)
+    elif shape_type == "rectangle":
+        red = int(input(f"How much red should the {shape_type} have (0 - 255): "))
+        green = int(input("How much green should the {shape_type} have (0 - 255): "))
+        blue = int(input(f"How much blue should the {shape_type} have (0 - 255): "))
+        color = (red, green, blue)
+        x_position = int(input("Enter x position: "))
+        y_position = int(input("Enter y position: "))
+        width = int(input("Enter width: "))
+        height = int(input("Enter height: "))
+        rectangle = Rectangle(x_position, y_position, width, height, color)
+        rectangle.draw(canvas)
+    elif shape_type == "quit":
+        canvas.save()
+        print("Thank you for playing!")
+        break
+    else:
+        print("Invalid figure name")
+        break
 
 
